@@ -57,8 +57,13 @@ public/js/
                markers(색연필 표시) inspect(3D 열람) talk(대화 덮개) npc hud props ambience
                reason(잇기·판본 비교·시간 띠·빈칸 추리·수첩 쪽의 규칙. 화면을 모름)
                notebook(수첩) board(증거판) photos(화면을 잘라 증거 사진으로) sfx(합성 효과음)
-               현장의 내용(조사점, 인물, 열람, 물음, 시한, 연결, 추리)은 data/sites/에 있다
-               수첩과 증거판의 스타일은 css/site-paper.css
+               records(조사 방식의 규칙: 검색, 오려 두기, 장부·돈 흐름·답안 대조의 판정. 화면을 모름)
+               probe(조사 방식 화면의 공통 틀) probe-web(공개 정보) probe-ledger(장부)
+               probe-flow(금융 시간 띠) probe-answers(답안 대조)
+               desk(임시 책상. 2D이고 three.js와 engine을 불러오지 않는다. 수첩과 증거판은 그대로 쓴다)
+               현장의 내용(조사점, 인물, 열람, 물음, 시한, 연결, 추리, 기록)은 data/sites/에 있다
+               index.js가 현장 목록을 모은다. kind가 "desk"이면 main이 engine 대신 desk를 연다
+               수첩과 증거판의 스타일은 css/site-paper.css, 조사 방식 화면과 책상은 css/site-probe.css
 tests/         시험. LLM을 부르지 않음
 tools/         regression balance probe / share share-check guest-preview / process-art
   3d/          Blender 스크립트: 방 만들기, 조명 굽기, 소품, 내보내기 (README.md)
