@@ -14,7 +14,7 @@
 | 층 | 선택 |
 |---|---|
 | 서버 | Node.js 20.12 이상, 표준 `node:http`. 프레임워크와 번들러 없음. LLM은 `@anthropic-ai/sdk`로 `claude-haiku-5-5`, effort `low`만 부름(서버에서 고정) |
-| 클라이언트 | 브라우저 기본 ES 모듈(빌드 단계 없음). 지도는 d3, topojson-client, world-atlas(50m)를 Canvas 2D에 그림 |
+| 클라이언트 | 브라우저 기본 ES 모듈(빌드 단계 없음). 지도는 d3, topojson-client, world-atlas(50m)를 Canvas 2D에 그림. 3D 현장(`site.html`)은 three.js(WebGL) |
 | 글꼴·소리·저장 | Pretendard, Noto Serif KR(`node_modules`에서 `/vendor/*`로 내보냄), WebAudio 합성, 브라우저 `localStorage` |
 | 시험·린트 | Node 내장 시험 러너(`node --test`), ESLint 9 |
 
@@ -23,6 +23,7 @@
 | 패키지 | 버전 | 라이선스 | 쓰는 곳 |
 |---|---|---|---|
 | d3 | 7.9.2 | ISC | 세계지도 투영과 그리기 |
+| three | 0.187 | MIT | 3D 현장. 본체와 glb·Draco 로더를 `/vendor/three/`로 내보내고 `site.html`의 importmap이 가리킨다 |
 | topojson-client | 3.1.0 | ISC | 지도 데이터 해석 |
 | world-atlas | 2.0.2 | ISC | 나라 경계 데이터 |
 | pretendard | 1.3.9 | OFL-1.1 | 화면 글꼴 |
@@ -50,9 +51,16 @@ public/js/
   campaign/    engine(비트 진행, 목표 평가)  chapters(장 등록. 목록 순서 = 진행 순서)
     prologue/  ch1/    장마다 폴더 하나
   ui/          dom map hud drawers panels manage detail interview editor cutscene casefile title
+  site/        3D 현장 (site.html에서 따로 열린다. 본 게임과는 아직 이어져 있지 않다)
+               main engine(불러오기, 이동, 조사점, 빛) state(규칙. 화면을 모름) nav(길 찾기, 충돌)
+               markers(색연필 표시) inspect(3D 열람) talk(대화 덮개) npc hud props ambience
+               현장의 내용(조사점, 인물, 열람, 물음, 시한)은 data/sites/에 있다
 tests/         시험. LLM을 부르지 않음
 tools/         regression balance probe / share share-check guest-preview / process-art
+  3d/          Blender 스크립트: 방 만들기, 조명 굽기, 소품, 내보내기 (README.md)
 ```
+
+3D 에셋(`public/assets/3d/`)은 저장소에 없습니다. 만드는 순서는 [`tools/3d/README.md`](../../tools/3d/README.md)에 있습니다.
 
 ### 묶음 파일과 가져오기 규칙
 
