@@ -76,6 +76,7 @@ tools/           회귀 지문, 밸런스 봇, 공유 실행과 점검, 에셋 �
 | [Docker 구성과 배포](docs/dev/docker.md) | 컨테이너 구성과 서버 배포 설계안 (구현 전) |
 | [알려진 문제](docs/roadmap/known-issues.md) | 지금 있는 결함과 확인하지 못한 부분 |
 | [향후 개발 계획](docs/roadmap/plan.md) | 할 일의 순서, 제안, 정할 것 |
+| [방향 전환](docs/roadmap/direction-proposal.md) · [캠페인 현장 3D 설계](docs/roadmap/campaign-3d-design.md) | 경영을 없애고 세계 → 국가 → 3D 현장 추리로 가는 방향과, 수능 AI 부정행위 사건으로 바꾼 캠페인의 현장 (**결정과 제안**) |
 | [팀 일정](docs/team-plan.md) · [평가 기준](docs/evaluation.md) | 발표 일정, 평가 항목과 확인 방법 |
 | [브랜치와 PR 운영](CONTRIBUTING.md) · [AI 협업 운영수칙](docs/ai-collaboration.md) · [AI 작업 규칙](AGENTS.md) | 협업 규칙 |
 
