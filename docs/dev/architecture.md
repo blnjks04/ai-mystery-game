@@ -28,6 +28,7 @@
 | world-atlas | 2.0.2 | ISC | 나라 경계 데이터 |
 | pretendard | 1.3.9 | OFL-1.1 | 화면 글꼴 |
 | @fontsource/noto-serif-kr | 5.3.1 | OFL-1.1 | 지면·내레이션 글꼴 |
+| @fontsource/nanum-pen-script | 5.3.0 | OFL-1.1 | 3D 현장의 수첩과 증거판 손글씨. `/vendor/nanum-pen-script/`로 내보낸다 |
 | @anthropic-ai/sdk | 1.7.0 | Apache-2.0 | 서버의 LLM 호출 |
 | eslint, globals | 9.39.5, 17.14.0 | MIT | 린트(개발용) |
 
@@ -54,7 +55,10 @@ public/js/
   site/        3D 현장 (site.html에서 따로 열린다. 본 게임과는 아직 이어져 있지 않다)
                main engine(불러오기, 이동, 조사점, 빛) state(규칙. 화면을 모름) nav(길 찾기, 충돌)
                markers(색연필 표시) inspect(3D 열람) talk(대화 덮개) npc hud props ambience
-               현장의 내용(조사점, 인물, 열람, 물음, 시한)은 data/sites/에 있다
+               reason(잇기·판본 비교·시간 띠·빈칸 추리·수첩 쪽의 규칙. 화면을 모름)
+               notebook(수첩) board(증거판) photos(화면을 잘라 증거 사진으로) sfx(합성 효과음)
+               현장의 내용(조사점, 인물, 열람, 물음, 시한, 연결, 추리)은 data/sites/에 있다
+               수첩과 증거판의 스타일은 css/site-paper.css
 tests/         시험. LLM을 부르지 않음
 tools/         regression balance probe / share share-check guest-preview / process-art
   3d/          Blender 스크립트: 방 만들기, 조명 굽기, 소품, 내보내기 (README.md)
