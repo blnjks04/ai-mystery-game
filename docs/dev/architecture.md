@@ -61,8 +61,11 @@ public/js/
                probe(조사 방식 화면의 공통 틀) probe-web(공개 정보) probe-ledger(장부)
                probe-flow(금융 시간 띠) probe-answers(답안 대조)
                desk(임시 책상. 2D이고 three.js와 engine을 불러오지 않는다. 수첩과 증거판은 그대로 쓴다)
+               travel(약도. 장소를 옮긴다. 갈 수 있는 곳과 걸리는 시간은 state가 정한다)
                현장의 내용(조사점, 인물, 열람, 물음, 시한, 연결, 추리, 기록)은 data/sites/에 있다
-               index.js가 현장 목록을 모은다. kind가 "desk"이면 main이 engine 대신 desk를 연다
+               index.js가 현장 목록(SITES)과 사건 목록(CASES)을 모은다. kind가 "desk"이면 main이 engine 대신 desk를 연다
+               save가 같은 현장들은 한 사건이다(프롤로그의 네 장소). 상태 하나를 함께 쓰고,
+               장소를 옮길 때마다 페이지를 새로 연다. 다음 사건으로는 state.carryInto가 상태를 넘긴다
                수첩과 증거판의 스타일은 css/site-paper.css, 조사 방식 화면과 책상은 css/site-probe.css
 tests/         시험. LLM을 부르지 않음
 tools/         regression balance probe / share share-check guest-preview / process-art
@@ -130,6 +133,7 @@ tools/         regression balance probe / share share-check guest-preview / proc
 | LLM 작업 추가 | `llm/tasks/<이름>.js` + `llm/tasks/limits.js` + `llm/prompts.js` + `server/tasks.js` | `npm test`, `node tools/probe.mjs` |
 | 프롬프트 고치기 | `llm/tasks/<이름>.js` | 브라우저에서 실제 응답 확인 |
 | 캠페인 장 추가 | `campaign/<장>/` 폴더 + `campaign/chapters.js`에 한 줄 | `npm test` (캠페인 검사), 브라우저 |
+| 3D 현장·장소 추가 | `data/sites/<이름>.js` + `data/sites/index.js` + 자리 이름을 적은 `tools/3d/<이름>_layout.py`와 블록아웃 glb. 엔진(`site/engine.js`)에는 특정 현장의 내용을 적지 않는다 | `npm test` (자리 이름, 카드의 맞물림, 규칙만으로 끝까지), 브라우저 `&blockout` |
 | 서랍(도크) 추가 | `ui/drawers.js`에 한 줄 + `ui/panels.js`의 `RENDER`에 그리는 함수 | 브라우저 |
 | 서버 주소(API) 추가 | `server/<이름>.js` + `server/index.js`의 분기 한 줄 | `node tools/share-check.mjs` |
 
