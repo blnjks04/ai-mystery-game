@@ -26,6 +26,7 @@
 | three | 0.187 | MIT | 3D 현장. 본체와 glb·Draco 로더를 `/vendor/three/`로 내보내고 `site.html`의 importmap이 가리킨다 |
 | topojson-client | 3.1.0 | ISC | 지도 데이터 해석 |
 | world-atlas | 2.0.2 | ISC | 나라 경계 데이터 |
+| Natural Earth 10m admin-1 | 2026-11-19에 내려받음 | 퍼블릭 도메인 | 시·도 경계 데이터(한국, 일본). npm 꾸러미가 아니다: `tools/build-admin1.mjs`가 뽑아 `public/assets/geo/`에 둔다 |
 | pretendard | 1.3.9 | OFL-1.1 | 화면 글꼴 |
 | @fontsource/noto-serif-kr | 5.3.1 | OFL-1.1 | 지면·내레이션 글꼴 |
 | @fontsource/nanum-pen-script | 5.3.0 | OFL-1.1 | 3D 현장의 수첩과 증거판 손글씨. `/vendor/nanum-pen-script/`로 내보낸다 |
@@ -38,9 +39,11 @@
 server/        index(진입점) config tasks static access limits llm health http
 public/js/
   main.js      부팅, 게임 시작, 개발용 손잡이          audio.js  효과음·음악 합성
-  core/        store(게임 상태 G, 저장)  bus(이벤트)  util(씨앗 난수, 시간, 문자열)
+  core/        store(게임 상태 G, 저장, 현장 취재로 진행하는 장)  bus(이벤트)  util(씨앗 난수, 시간, 문자열)
+               geo(시·도 경계 자료 읽기. 화면을 모름)
   data/        내용과 수치. 다른 영역을 가져오지 않는 순수 정의
                countries categories outlets cities actors agendas names labels progress
+               cases(시·도 지도가 있는 나라, 국가 지도에 꽂히는 사건 핀과 개요)
     events/    사건 유형 40가지. 분야별 파일을 index.js가 EVENT_TYPES로 모음
   sim/         규칙 엔진. 화면을 모름
                clock director chronicle rivals canon lore
@@ -50,9 +53,11 @@ public/js/
   llm/         api(호출, 재시도, 연결 상태, 접속 코드)  world-rules(모든 프롬프트의 세계 규칙)
     tasks/     작업별 스키마와 요청 조립. limits.js에 작업 목록과 출력 상한
   campaign/    engine(비트 진행, 목표 평가)  chapters(장 등록. 목록 순서 = 진행 순서)
-    prologue/  ch1/    장마다 폴더 하나
+    prologue/  ch1/    장마다 폴더 하나. prologue는 현장(3D)까지 데려가는 목표만 가진다(field: true)
   ui/          dom map hud drawers panels manage detail interview editor cutscene casefile title
-  site/        3D 현장 (site.html에서 따로 열린다. 본 게임과는 아직 이어져 있지 않다)
+               nation(국가 지도: 시·도, 사건 핀, 개요, 떠나는 연출)  fieldwork(현장 취재 모드: 세계지도 → 국가 지도 → 사건 → 현장을 잇는다)
+  site/        3D 현장 (site.html에서 따로 열린다. 본 게임에서는 ui/fieldwork가 주소로 넘어오고, 약도의 "세계지도로 나간다"가 /?resume으로 돌아간다.
+               저장은 따로다: 본 게임은 현장의 저장에서 지금 있는 곳과 시각만 읽는다)
                main engine(불러오기, 이동, 조사점, 빛) state(규칙. 화면을 모름) nav(길 찾기, 충돌)
                markers(색연필 표시) inspect(3D 열람) talk(대화 덮개) npc hud props ambience
                reason(잇기·판본 비교·시간 띠·빈칸 추리·수첩 쪽의 규칙. 화면을 모름)
@@ -69,6 +74,7 @@ public/js/
                수첩과 증거판의 스타일은 css/site-paper.css, 조사 방식 화면과 책상은 css/site-probe.css
 tests/         시험. LLM을 부르지 않음
 tools/         regression balance probe / share share-check guest-preview / process-art
+               build-admin1(시·도 경계 자료 만들기: Natural Earth 10m admin-1 → public/assets/geo/admin1-<나라 번호>.json)
   3d/          Blender 스크립트: 방 만들기, 조명 굽기, 소품, 내보내기 (README.md)
 ```
 
@@ -77,6 +83,16 @@ tools/         regression balance probe / share share-check guest-preview / proc
 ### 묶음 파일과 가져오기 규칙
 
 `sim/world.js`, `sim/press.js`, `data/world.js`, `data/templates.js`, `llm/prompts.js`, `campaign/chapter1.js`, `campaign/prologue.js`는 폴더 안의 파일을 모아 다시 내보내기만 합니다.
+
+### 현장 취재 모드
+
+`core/store.js`의 `FIELD_CHAPTERS`에 든 장(지금은 프롤로그)에서는 본 게임이 **현장 취재 모드**로 열립니다. `main.js`가 세계의 시계를 돌리지 않고, `ui/fieldwork.js`가 `#screen-game`에 `field`를 붙여 경영 화면을 치웁니다(`css/nation.css`). 세계지도는 `ui/map.js`의 `setField()`로 사건 수와 들어갈 수 있는 나라를 띄우고, 나라를 누르면(`map:country`) `ui/nation.js`의 국가 지도가 열립니다.
+
+- 국가 지도는 지도를 그리고 고르게 할 뿐입니다. 어떤 사건이 어디에 있고 어디까지 했는지는 `fieldwork`가 넘겨줍니다(`data/cases.js`의 핀 + 현장의 저장에서 읽은 상태).
+- 시·도 경계는 한 번만 투영해 `Path2D`로 두고, 옮기기와 확대는 변환만 바꿉니다(세계지도와 같은 방식). 둘레의 다른 나라는 세계지도의 자료를 같은 투영으로 흐리게 깝니다.
+- 현장으로 떠나면 페이지가 `/site.html?case=<사건>`으로 바뀝니다. 처음 떠날 때와 "처음부터 다시"일 때만 `&fresh`가 붙고, 현장은 그것을 한 번 쓰고 주소에서 뗍니다(새로 고침해도 진행이 지워지지 않게).
+- 진행 표시는 `G.campaign.flags`의 `nationOpened`, `caseSeen`, `departed`입니다. 프롤로그 장은 다음 장으로 넘어가지 않습니다(현장의 결과를 본 게임이 받는 방법이 **미정**입니다).
+- 새 사건을 지도에 올리려면 `data/cases.js`의 `CASE_PINS`에 한 줄을 더합니다. 새 나라의 지도는 `tools/build-admin1.mjs`의 `COUNTRIES`와 `data/cases.js`의 `NATION_MAPS`에 더하고 도구를 다시 돌립니다.
 
 - 다른 영역에서는 묶음 파일을 가져옵니다(`import { publish } from "../sim/press.js"`). **같은 폴더 안에서는 옆 파일을 직접 가져옵니다**(`sim/press/publish.js`에서 `import { notes } from "./notebook.js"`). 묶음 파일을 가져오면 서로 물립니다.
 - 있는 파일에 함수를 더할 때는 `export`만 붙이면 됩니다(묶음 파일은 `export *`). 폴더에 파일을 새로 만들면 묶음 파일에 한 줄을 더합니다.
