@@ -19,10 +19,10 @@
 | `bake_room12.py` | 조명 굽기. 형광등 / 하늘빛 / 해의 되비침 석 장 |
 | `real_lib.py` | 사실화 도구(`Real`): 그림으로 만든 재질(얼룩, 나뭇결, 장판, 벽돌 따위), 상자·원통·덩어리·글자·그림판, 문과 창이 뚫린 벽, 형광등, 하늘 반구, Tripo 가구 불러와 놓기, 끝맺음(`finish`: 안 보이는 면 지우기, 조명용 UV `lm`). 프롤로그부터 쓴다 |
 | `bake_site.py` | 장소 하나의 조명 굽기(석 장). `bake_room12.py`를 장소에 매이지 않게 고친 것 |
-| `make_prologue_textures.py` | 프롤로그의 글자 그림(노트북 화면, 순위표, 현수막, 문패, 안내문, 일정표, 분리수거 쪽지 따위). Blender 밖에서 Python과 Pillow로 돌린다. `tools/_raw/3d/tex/pl_*.png` |
+| `make_prologue_textures.py` | 프롤로그의 글자 그림(노트북 화면, 순위표, 현수막, 문패, 안내문, 일정표, 분리수거 쪽지 따위)과 열람 소품의 그림(운송장, 쪽지, 수험표, 연습지와 그 광택, 골판지, 도장, 인주, 천). Blender 밖에서 Python과 Pillow로 돌린다. `tools/_raw/3d/tex/pl_*.png` |
 | `build_prologue_real.py` | 사실화한 프롤로그 네 장소. `build(이름)`, `bake_one(이름, 종류, 화소, 표본)`, `export(이름)`, `save(이름)`. 장소마다 blend 파일 하나(`tools/_raw/3d/blend/prologue_<이름>.blend`) |
 | `make_prop_textures.py` | 단서 그림(펜 라벨, 점검표 스티커 두 가지, 기판 화면). Blender 밖에서 Python과 Pillow로 돌린다 |
-| `build_props.py` | 열람용 소품 넷(펜, 뿔테, 천장 속, 빈 천장 속)과 인물 불러오기·내보내기 |
+| `build_props.py` | 열람용 소품 넷(펜, 뿔테, 천장 속, 빈 천장 속), 프롤로그의 열람 소품 셋(택배 상자, 필통, 연습지), 인물 불러오기·내보내기 |
 | `export_glb.py` | 컬렉션 하나를 glb로. Draco, WebP, 동작 |
 
 ## 순서
@@ -127,6 +127,12 @@ save("academy")                     # tools/_raw/3d/blend/prologue_academy.blend
 - 사무 책상은 모니터·자판·화분이 한 덩어리로 붙어 옵니다. 윗판 위의 것을 걷어 내고 몸통만 쓰며(`desk_mesh`), 윗판과 책상 위의 것은 따로 짓습니다(책상마다 다르게). 나무는 밑동에 낙엽 원판이 붙어 있어 조금 묻어 심고, 잎이 높이의 0.3부터 달리므로 경비실 옆에서는 8m로 키웁니다.
 - **다시 지어도 조명용 UV는 같습니다**(같은 입력이면 `static`이 같다). 그래서 가구(`furniture`)만 바뀌었으면 다시 굽지 않고 `build()` → `export()`만 해도 됩니다. 다만 `build()`가 돌려주는 `static`의 면 수가 달라졌으면 구운 그림과 어긋나므로 석 장을 다시 굽습니다. 대역이 `static` 상자로 지어지던 것(책상의 판)이 Tripo로 바뀔 때, 난수를 쓰는 차례가 바뀔 때(나무의 대역과 Tripo 나무) 그렇게 됩니다. 어긋나면 게임에서 벽이 얼룩덜룩 검게 나옵니다.
 - 위층 덩어리처럼 1층 천장과 같은 높이에 밑면이 있는 상자는 밑면을 떼어 냅니다(`no_bottom`). 겹치면 게임에서 천장이 어둡게 깜빡입니다.
+- **열람 소품 셋**(택배 상자, 필통, 연습지)은 12시험실 파일(`mokwon_room12.blend`)에서 짓습니다. `run("build_props.py")` → `build_all()` → `build_inspect_props()` → `export_props(INSPECT_PROPS)`. 필통이 사인펜과 안경의 메시를 빌려 쓰므로 `build_all()`이 먼저입니다. 결과는 `public/assets/3d/props/{parcel,pencilcase,practice}.glb`이고, 사건 데이터의 `INSPECTS`에 `model`로 이어져 있습니다(시점 값 `view`도 거기서 맞춥니다: glb가 있으면 사건 데이터의 `view`만 읽습니다).
+  - 연습지의 광택은 거칠기 그림(`pl_practice_rough.png`)에만 있습니다. 줄의 자리는 `pl_practice.json`에 함께 적히고, Blender가 볼 곳(`detail_gloss`, `detail_margin`)의 자리를 거기서 읽습니다. 문제를 고치면 그림 둘과 json이 같이 바뀌므로 소품도 다시 지어 내보냅니다. 문제는 새로 지은 것만 싣고, 고칠 때마다 답을 직접 풀어 확인합니다.
+  - 거칠기 그림은 Separate Color 노드의 초록을 거쳐 이어야 glb에 실립니다(`img_mat`).
+  - `Part`는 면마다 점을 따로 만들어서 굴린 것이 각져 보입니다. 도장, 인주통, 필통은 `finish_weld()`로 점을 붙이고 꺾인 모서리만 날카롭게 남깁니다.
+  - 안경 다리는 앞테 바로 뒤에서 잘라 안쪽으로 돌려 접습니다(`folded_glasses`). 돌릴 점은 **돌리기 전에** 양쪽을 다 골라 둡니다(먼저 돌린 다리가 반대쪽으로 넘어가 한 번 더 돌았다).
+  - 상자 앞벽이 속을 가리므로 물건은 구긴 종이 위 7cm 높이에 놓았습니다. 물건을 옮기면 종이가 그 자리만 눌리도록 `rest`의 자리도 같이 고칩니다.
 - 인물 셋(`guard`, `tutor`, `chief`)은 `build_props.py`의 `build_char()`, `export_char()`로 **한 사람씩** 내보냅니다. 여럿을 함께 불러오면 동작 이름이 `idle.001`처럼 겹칩니다.
 - 충돌 상자나 자리 표시를 고쳤으면 블록아웃 glb도 다시 내보냅니다(`?blockout`이 같은 자리를 쓰도록).
 
