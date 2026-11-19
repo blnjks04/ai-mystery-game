@@ -78,7 +78,7 @@ tools/         regression balance probe / share share-check guest-preview / proc
   3d/          Blender 스크립트: 방 만들기, 조명 굽기, 소품, 내보내기 (README.md)
 ```
 
-3D 에셋(`public/assets/3d/`)은 저장소에 없습니다. 만드는 순서는 [`tools/3d/README.md`](../../tools/3d/README.md)에 있습니다.
+3D 에셋(`public/assets/3d/`, glb와 구운 조명 그림)은 Git LFS 없이 일반 파일로 저장소에 들어 있습니다. 가공 전 원본(`tools/_raw/`)은 올리지 않습니다. 만드는 순서는 [`tools/3d/README.md`](../../tools/3d/README.md)에 있습니다.
 
 ### 묶음 파일과 가져오기 규칙
 

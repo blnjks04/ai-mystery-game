@@ -65,7 +65,7 @@
 | 콘솔 `await import("/js/sim/world.js")` | 어떤 모듈이든 불러 함수를 직접 써 봄 |
 | `GET /api/health` (내 PC) | LLM 작업별 호출 수와 오류 수 |
 
-**3D 현장** (`/site.html?site=mokwon_room12`, 3D 에셋이 로컬에 있어야 열립니다)
+**3D 현장** (`/site.html?site=mokwon_room12`, 3D 에셋은 저장소에 들어 있습니다)
 
 | 방법 | 쓰임 |
 |---|---|
